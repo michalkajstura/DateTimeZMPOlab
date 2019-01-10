@@ -30,12 +30,9 @@ bool Date::isLeapYear(int year) {
 }
 
 int Date::daysBetween(Date &anotherDate) {
-    double difference = (daysFromEpochStart - anotherDate.daysFromEpochStart);
-    return abs(difference);
-}
-
-double Date::daysBetweenDouble(Date &anotherDate) {
-    return daysFromEpochStart - anotherDate.daysFromEpochStart;
+    // cast to int to ignore hours and minutes
+    int difference = ((int) daysFromEpochStart - (int) anotherDate.daysFromEpochStart);
+    return difference;
 }
 
 Date Date::operator+(int daysFromNow) {
@@ -47,11 +44,11 @@ Date Date::operator-(int daysFromNow) {
 }
 
 bool Date::operator==(Date &anotherDate) {
-    return fabs(daysBetweenDouble(anotherDate)) < ONE_SECOND_IN_DAYS;
+    return daysBetween(anotherDate) == 0;
 }
 
 bool Date::operator>(Date &anotherDate) {
-    return daysBetweenDouble(anotherDate) > 0;
+    return daysBetween(anotherDate) > 0;
 }
 
 bool Date::operator<(Date &anotherDate) {
