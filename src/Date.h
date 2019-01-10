@@ -11,6 +11,7 @@ const int DAYS_IN_YEAR = 365;
 const int START_EPOCH_YEAR = 0;
 const int LEAP_YEAR_RANGE = 4;
 const int DAYS_IN_MONTH[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+const double ONE_SECOND_IN_DAYS = 1. / SECONDS_IN_DAY;
 
 using namespace std;
 
@@ -19,18 +20,19 @@ public:
     Date(int day=DEFAULT_DAY, int month=DEFAULT_MONTH, int year=DEFAULT_YEAR);
     Date(Date &anotherDate);
 
-//    Date operator+(int daysFromNow);
-//    Date operator-(int daysFromNow);
-//    bool operator<(Date &anotherDate);
-//    bool operator<=(Date &anotherDate);
-//    bool operator>(Date &anotherDate);
-//    bool operator>=(Date &anotherDate);
-//    bool operator==(Date &anotherDate);
+    Date operator+(int daysFromNow);
+    Date operator-(int daysFromNow);
+    bool operator<(Date &anotherDate);
+    bool operator<=(Date &anotherDate);
+    bool operator>(Date &anotherDate);
+    bool operator>=(Date &anotherDate);
+    bool operator==(Date &anotherDate);
 
     int daysBetween(Date &anotherDate);
 
 private:
     bool isLeapYear(int year);
+    double daysBetweenDouble(Date &anotherDate);
     double daysFromEpochStart;
 
 };
