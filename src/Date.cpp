@@ -6,21 +6,24 @@ Date::Date(int day, int month, int year) {
     month = validateMonth(month, now);
     day = validateDay(day, month, now);
 
-    daysFromEpochStart = day;
+    minutesFromEpochStart = (day - 1) * MINUTES_IN_DAY;
 
     for (int m=0; m < month - 1; m++) {
-        daysFromEpochStart += DAYS_IN_MONTH[m];
+        if (m == 1 && isLeapYear(year))
+            minutesFromEpochStart += (DAYS_IN_MONTH[m] + 1) * MINUTES_IN_DAY;
+        else
+            minutesFromEpochStart += DAYS_IN_MONTH[m] * MINUTES_IN_DAY;
     }
 
     int change = (year > START_EPOCH_YEAR) ? 1 : -1;
     for (int y = START_EPOCH_YEAR; y != year; y += change) {
-        int daysInYear = (isLeapYear(year)) ? DAYS_IN_YEAR + 1: DAYS_IN_YEAR;
-        daysFromEpochStart += daysInYear;
+        int daysInYear = (isLeapYear(y)) ? DAYS_IN_YEAR + 1: DAYS_IN_YEAR;
+        minutesFromEpochStart += daysInYear * MINUTES_IN_DAY * change;
     }
 }
 
 Date::Date(Date &anotherDate) {
-    daysFromEpochStart = anotherDate.daysFromEpochStart;
+    minutesFromEpochStart = anotherDate.minutesFromEpochStart;
 }
 
 bool Date::isLeapYear(int year) {
@@ -30,22 +33,25 @@ bool Date::isLeapYear(int year) {
 }
 
 int Date::daysBetween(Date &anotherDate) {
-    // cast to int to ignore hours and minutes
-    int difference = ((int) daysFromEpochStart - (int) anotherDate.daysFromEpochStart);
-    return difference;
+    return daysBetween(anotherDate.minutesFromEpochStart);
+}
+
+int Date::daysBetween(double timePointInMinutes) {
+    int difference = minutesFromEpochStart - timePointInMinutes;
+    return difference / MINUTES_IN_DAY;
 }
 
 Date& Date::operator=(const Date &anotherDate) {
-    daysFromEpochStart = anotherDate.daysFromEpochStart;
+    minutesFromEpochStart = anotherDate.minutesFromEpochStart;
     return *this;
 }
 
 void Date::operator+(int daysFromNow) {
-    daysFromEpochStart += daysFromNow;
+    minutesFromEpochStart += daysFromNow * MINUTES_IN_DAY;
 }
 
 void Date::operator-(int daysFromNow) {
-    daysFromEpochStart -= daysFromNow;
+    minutesFromEpochStart -= daysFromNow * MINUTES_IN_DAY;
 }
 
 bool Date::operator==(Date &anotherDate) {
@@ -74,7 +80,19 @@ int Date::validateDay(int day, int month, tm* now) {
 
 int Date::validateMonth(int month, tm* now) {
     // Get time now
-    return (month > 0 && month <= NUM_OF_DAYS_IN_MONTH) ? month : now->tm_mon;
+    return (month > 0 && month <= NUM_OF_MONTHS) ? month : now->tm_mon;
 }
 
-
+int Date::getYear() {
+    double minutes = 0;
+    double absMinutesFromStart = abs(minutesFromEpochStart);
+    int year = 0;
+    while (minutes < absMinutesFromStart) {
+        int daysInYear =  (isLeapYear(START_EPOCH_YEAR + year)) ? DAYS_IN_YEAR + 1 : DAYS_IN_YEAR;
+        minutes += daysInYear * MINUTES_IN_DAY;
+        if (minutes <= absMinutesFromStart)
+            year += 1;
+    }
+    year = (minutesFromEpochStart < 0) ? -year : year;
+    return year;
+}

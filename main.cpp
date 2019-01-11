@@ -3,10 +3,14 @@
 #include "src/TimeStamp.h"
 
 int main() {
-    Date d(-1, 3, 2019);
-    TimeStamp ts(3, 3, 2019, 12, 00);
-    TimeStamp ts2(3, 3, 2019, 12, 30);
-    d+3;
+    Date d(31, 12, 123333);
+    Date d2(2, 6, 1231);
+//    Date d2(13, 1, 5019);
+//    cout << (d == d2) << endl;
+//    cout << (d > d2) << endl;
+//    cout << (d <= d2) << endl;
+    cout << d.getYear() << endl;
+    cout << d2.getYear() << endl;
 
 //    cout << d.daysBetween(d2) << endl;
     return 0;
