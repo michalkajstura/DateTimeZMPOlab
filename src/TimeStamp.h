@@ -3,20 +3,23 @@
 
 #include "Date.h"
 
+const double DAYS_IN_MINUTE = 1. / (60 * 24);
+const double DAYS_IN_HOUR = 1. / 24.;
+
 class TimeStamp : public Date {
 
 public:
     TimeStamp(int day, int month, int year, int hour, int minute);
 
+    void operator+(int hours) override;
+    void operator-(int hours) override;
+    TimeStamp &operator=(const TimeStamp &another);
     bool operator<(TimeStamp &anotherTimeStamp);
     bool operator<=(TimeStamp &anotherTimeStamp);
     bool operator>(TimeStamp &anotherTimeStamp);
     bool operator>=(TimeStamp &anotherTimeStamp);
     bool operator==(TimeStamp &anotherTimeStamp);
-    int daysBetween(TimeStamp &anotherTimeStamp);
-
 private:
-    bool hoursAndMinutesGreater(TimeStamp &another);
 };
 
 

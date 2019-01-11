@@ -1,13 +1,13 @@
 #include <iostream>
 #include "src/Date.h"
+#include "src/TimeStamp.h"
 
 int main() {
-    Date d(1, 3, 2019);
-    Date d2(10, 1, 2019);
-    Date d3(10, 1, 2019);
-    cout << (d < d2) << endl;
-    cout << (d3 == d2) << endl;
-    cout << (d3 >= d2) << endl;
+    Date d(3, 3, 2019);
+    TimeStamp ts(3, 3, 2019, 12, 00);
+    TimeStamp ts2(3, 3, 2019, 12, 30);
+    d+3;
+
 //    cout << d.daysBetween(d2) << endl;
     return 0;
 }

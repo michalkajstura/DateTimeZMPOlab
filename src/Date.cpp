@@ -35,11 +35,16 @@ int Date::daysBetween(Date &anotherDate) {
     return difference;
 }
 
-Date Date::operator+(int daysFromNow) {
+Date& Date::operator=(const Date &anotherDate) {
+    daysFromEpochStart = anotherDate.daysFromEpochStart;
+    return *this;
+}
+
+void Date::operator+(int daysFromNow) {
     daysFromEpochStart += daysFromNow;
 }
 
-Date Date::operator-(int daysFromNow) {
+void Date::operator-(int daysFromNow) {
     daysFromEpochStart -= daysFromNow;
 }
 
