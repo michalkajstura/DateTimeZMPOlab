@@ -1,11 +1,11 @@
-#include <cfloat>
-#include <iostream>
-#include <climits>
-#include <cmath>
 #include "Date.h"
 
 Date::Date(int day, int month, int year) {
-    // TODO validation
+    time_t timeNow = time(0);
+    tm* now = localtime(&timeNow);
+    month = validateMonth(month, now);
+    day = validateDay(day, month, now);
+
     daysFromEpochStart = day;
 
     for (int m=0; m < month - 1; m++) {
@@ -67,4 +67,14 @@ bool Date::operator>=(Date &anotherDate) {
 bool Date::operator<=(Date &anotherDate) {
     return ! this->operator>=(anotherDate);
 }
+
+int Date::validateDay(int day, int month, tm* now) {
+    return (day > 0 && day <= DAYS_IN_MONTH[month]) ? day : now->tm_mday;
+}
+
+int Date::validateMonth(int month, tm* now) {
+    // Get time now
+    return (month > 0 && month <= NUM_OF_DAYS_IN_MONTH) ? month : now->tm_mon;
+}
+
 
