@@ -19,6 +19,7 @@ public:
     bool operator>(TimeStamp &anotherTimeStamp);
     bool operator>=(TimeStamp &anotherTimeStamp);
     bool operator==(TimeStamp &anotherTimeStamp);
+    friend ostream & operator << (ostream &out, TimeStamp& timeStamp);
     int getHour();
     int getMinute();
 private:

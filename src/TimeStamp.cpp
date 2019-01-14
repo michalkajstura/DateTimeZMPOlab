@@ -41,11 +41,29 @@ void TimeStamp::operator-(int hours) {
 }
 
 int TimeStamp::getHour() {
-    return get<3>(calculateDDMMYYYYHHmm());
+    double minutes = 0;
+    int year = calculateYear(minutes);
+    calculateMonths(year, minutes);
+    calculateDay(minutes);
+    int hour = (abs(minutesFromEpochStart) - minutes) / MINUTES_IN_HOUR;
+    return hour;
 }
 
 int TimeStamp::getMinute() {
-    return get<4>(calculateDDMMYYYYHHmm());
+    double minutes = 0;
+    int year = calculateYear(minutes);
+    calculateMonths(year, minutes);
+    calculateDay(minutes);
+    int hour = (abs(minutesFromEpochStart) - minutes) / MINUTES_IN_HOUR;
+    minutes -= hour * MINUTES_IN_HOUR;
+    return  abs(minutesFromEpochStart) - minutes;
 }
 
-
+ostream & operator << (ostream &out, TimeStamp& timeStamp){
+    out << to_string(timeStamp.getHour()) + ":";
+    out << to_string(timeStamp.getMinute()) + " ";
+    out << to_string(timeStamp.getDay()) + "/";
+    out << to_string(timeStamp.getMonth()) + "/";
+    out << to_string(timeStamp.getYear());
+    return out;
+}

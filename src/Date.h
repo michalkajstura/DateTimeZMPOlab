@@ -30,6 +30,7 @@ public:
 //    Date& operator=(Date &anotherDate);
     virtual void operator+(int daysFromNow);
     virtual void operator-(int daysFromNow);
+    virtual int operator-(Date &anotherDate);
     Date& operator=(const Date &anotherDate);
     virtual bool operator<(Date &anotherDate);
     virtual bool operator<=(Date &anotherDate);
@@ -38,7 +39,6 @@ public:
     virtual bool operator==(Date &anotherDate);
     friend ostream & operator << (ostream &out, Date&date);
 
-    virtual long daysBetween(Date &anotherDate);
     int getDay();
     int getMonth();
     int getYear();
@@ -48,14 +48,17 @@ private:
     int validateDay(int day, int month, int year, tm* now);
     int validateMonth(int month, tm* now);
     int numberOfDaysInYear(int year) ;
+    virtual long daysBetween(Date &anotherDate);
 
 
 
 protected:
     // unsigned long would be much better choice but I have to use double
-    tuple<int, int, int, int, int> calculateDDMMYYYYHHmm() ;
     double minutesFromEpochStart;
 
+    int calculateYear(double &minutes);
+    int calculateMonths(int year, double &minutes) const;
+    int calculateDay(double &minutes) const;
 };
 
 

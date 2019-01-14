@@ -47,6 +47,10 @@ void Date::operator-(int daysFromNow) {
     minutesFromEpochStart -= daysFromNow * MINUTES_IN_DAY;
 }
 
+int Date::operator-(Date &anotherDate) {
+    return daysBetween(anotherDate);
+}
+
 bool Date::operator==(Date &anotherDate) {
     return daysBetween(anotherDate) == 0;
 }
@@ -77,59 +81,57 @@ int Date::validateMonth(int month, tm* now) {
 }
 
 int Date::getYear() {
-    return std::get<2>(calculateDDMMYYYYHHmm());
+    double minutes = 0;
+    return calculateYear(minutes);
 }
 
 int Date::getMonth(){
-    return std::get<1>(calculateDDMMYYYYHHmm());
+    double minutes = 0;
+    int year = calculateYear(minutes);
+    return calculateMonths(year, minutes);
 }
 
 int Date::getDay() {
-    return std::get<0>(calculateDDMMYYYYHHmm());
+    double minutes = 0;
+    int year = calculateYear(minutes);
+    calculateMonths(year, minutes);
+    return calculateDay(minutes);
 }
 
-tuple<int, int, int, int, int> Date::calculateDDMMYYYYHHmm() {
-    double absMinutesFromStart = abs(minutesFromEpochStart);
-    double minutes = 0;
-    int year = START_EPOCH_YEAR;
+int Date::calculateDay(double &minutes) const {
+    int day= (abs(minutesFromEpochStart)- minutes) / MINUTES_IN_DAY + 1;
+    minutes += MINUTES_IN_DAY;
+    return day;
+}
 
-    bool nextIteration = true;
-    while (nextIteration) {
-        minutes += numberOfDaysInYear(year) * MINUTES_IN_DAY;
-        if (minutes < absMinutesFromStart)
-            year += 1;
-        else
-            nextIteration = false;
-    }
-    minutes -= numberOfDaysInYear(year) * MINUTES_IN_DAY;
-
-    if (minutes == absMinutesFromStart) {
-
-    }
-
-    year = (minutesFromEpochStart < 0) ? -year : year;
-
+int Date::calculateMonths(int year, double &minutes) const {
     int month = 1;
-    nextIteration = true;
+    bool nextIteration = true;
     while (month <= NUM_OF_MONTHS
            && nextIteration) {
         minutes += DAYS_IN_MONTH[isLeapYear(year)][month-1] * MINUTES_IN_DAY;
-        if (minutes <= absMinutesFromStart) {
+        if (minutes <= abs(minutesFromEpochStart)) {
             month++;
         } else
             nextIteration = false;
     }
     minutes -= DAYS_IN_MONTH[isLeapYear(year)][month - 1] * MINUTES_IN_DAY;
+    return month;
+}
 
-    int day = (absMinutesFromStart - minutes) / MINUTES_IN_DAY + 1;
-    minutes += MINUTES_IN_DAY;
-
-    int hour = (absMinutesFromStart - minutes) / MINUTES_IN_HOUR;
-    minutes += hour * MINUTES_IN_HOUR;
-
-    minutes = absMinutesFromStart - minutes;
-
-    return tuple<int, int, int, int, int>(day, month, year, hour, minutes);
+int Date::calculateYear(double &minutes) {
+    int year= START_EPOCH_YEAR;
+    bool nextIteration = true;
+    while (nextIteration) {
+        minutes += numberOfDaysInYear(year) * MINUTES_IN_DAY;
+        if (minutes < abs(minutesFromEpochStart))
+            year += 1;
+        else
+            nextIteration = false;
+    }
+    minutes -= numberOfDaysInYear(year) * MINUTES_IN_DAY;
+    year= (minutesFromEpochStart < 0) ? -year : year;
+    return year;
 }
 
 int Date::numberOfDaysInYear(int year) {
@@ -140,9 +142,8 @@ int Date::numberOfDaysInYear(int year) {
 }
 
 ostream & operator << (ostream &out, Date& date){
-    tuple<int, int, int, int, int> DDMMYYYYHHmm = date.calculateDDMMYYYYHHmm();
-    out << to_string(get<0>(DDMMYYYYHHmm)) + "/";
-    out << to_string(get<1>(DDMMYYYYHHmm)) + "/";
-    out << get<2>(DDMMYYYYHHmm);
+    out << to_string(date.getDay()) + "/";
+    out << to_string(date.getMonth()) + "/";
+    out << to_string(date.getYear());
     return out;
 }
